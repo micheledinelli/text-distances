@@ -23,9 +23,8 @@ s1 = "Obama speaks to the media in Illinois"
 s2 = "The president greets the press in Chicago"
 s3 = "Duck"
 s4 = "Cool"
-s5 = "Supercalifragilistichespiralidoso"
 
-corpus = [s1, s2, s3, s4, s5]
+corpus = [s1, s2, s3, s4]
 
 vectorizer = CountVectorizer()
 vectorizer.fit(corpus)
@@ -35,7 +34,7 @@ matrix = vectorizer.fit_transform(corpus)
 table = matrix.todense()
 df = pd.DataFrame(table, 
                   columns=vectorizer.get_feature_names_out(), 
-                  index=['text_1', 'text_2', 'text_3', 'text_4', 'text_5'])
+                  index=['text_1', 'text_2', 'text_3', 'text_4'])
 
 df.head()
 ```
@@ -72,7 +71,6 @@ df.head()
       <th>president</th>
       <th>press</th>
       <th>speaks</th>
-      <th>supercalifragilistichespiralidoso</th>
       <th>the</th>
       <th>to</th>
     </tr>
@@ -91,7 +89,6 @@ df.head()
       <td>0</td>
       <td>0</td>
       <td>1</td>
-      <td>0</td>
       <td>1</td>
       <td>1</td>
     </tr>
@@ -108,7 +105,6 @@ df.head()
       <td>1</td>
       <td>1</td>
       <td>0</td>
-      <td>0</td>
       <td>2</td>
       <td>0</td>
     </tr>
@@ -117,7 +113,6 @@ df.head()
       <td>0</td>
       <td>0</td>
       <td>1</td>
-      <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -142,24 +137,6 @@ df.head()
       <td>0</td>
       <td>0</td>
       <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>text_5</th>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
       <td>0</td>
       <td>0</td>
     </tr>
@@ -372,6 +349,81 @@ plt.show()
 
 ## Text Representation
 
+### LCS
+
+
+```python
+def visualize_lcs_matrix(X, Y, lcs_matrix, longest_common_subsequence):
+    fig, ax = plt.subplots()
+    ax.set_title('Longest Common Subsequence Matrix')
+    cax = ax.matshow(lcs_matrix, cmap='Blues')
+
+    for i in range(len(X) + 1):
+        for j in range(len(Y) + 1):
+            ax.text(j, i, str(lcs_matrix[i, j]), ha='center', va='center', color='black')
+
+    ax.set_xticks(np.arange(len(Y) + 1))
+    ax.set_yticks(np.arange(len(X) + 1))
+    ax.set_xticklabels([''] + list(Y), fontsize=20)
+    ax.set_yticklabels([''] + list(X), fontsize=20)
+    plt.colorbar(cax)
+    fig.text(0.5, 0.05, "Longest Common Subsequence: " + longest_common_subsequence, ha='center', va='bottom', fontsize=14)
+    plt.show()
+```
+
+
+```python
+def longest_common_subsequence(X, Y):
+    m = len(X)
+    n = len(Y)
+
+    # Create a matrix to store lengths of LCS
+    lcs_matrix = np.zeros((m+1, n+1), dtype=int)
+
+    # Build the matrix
+    for i in range(1, m+1):
+        for j in range(1, n+1):
+            if X[i-1] == Y[j-1]:
+                lcs_matrix[i][j] = lcs_matrix[i-1][j-1] + 1
+            else:
+                lcs_matrix[i][j] = max(lcs_matrix[i-1][j], lcs_matrix[i][j-1])
+
+    # Find the length of LCS
+    length_lcs = lcs_matrix[m][n]
+
+    # Find the actual LCS
+    lcs = []
+    i, j = m, n
+    while i > 0 and j > 0:
+        if X[i-1] == Y[j-1]:
+            lcs.insert(0, X[i-1])
+            i -= 1
+            j -= 1
+        elif lcs_matrix[i-1][j] > lcs_matrix[i][j-1]:
+            i -= 1
+        else:
+            j -= 1
+
+    return length_lcs, ''.join(lcs), lcs_matrix
+
+length_lcs, lcs_sequence, lcs_matrix = longest_common_subsequence(s4, "whool")
+print(f"Length of Longest Common Subsequence: {length_lcs}")
+print(f"Longest Common Subsequence: {lcs_sequence}")
+
+visualize_lcs_matrix(s4, "whool", lcs_matrix, lcs_sequence)
+
+```
+
+    Length of Longest Common Subsequence: 3
+    Longest Common Subsequence: ool
+
+
+
+    
+![png](README_files/README_15_1.png)
+    
+
+
 ### TF-IDF
 
 
@@ -421,7 +473,7 @@ print(documents)
 
 
     
-![png](README_files/README_14_0.png)
+![png](README_files/README_17_0.png)
     
 
 
@@ -453,4 +505,92 @@ print('distance = %.4f' % distance)
 
     distance = 1.0175
 
+
+## Shallow Windows
+ 
+
+
+```python
+from gensim.models import Word2Vec
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+
+# Sample sentences for training
+sports_sentences = [
+    "Soccer is the most popular sport in the world.",
+    "Basketball games are fast-paced and exciting.",
+    "Tennis requires precision and agility on the court.",
+]
+
+technology_sentences = [
+    "Artificial intelligence is reshaping industries.",
+    "Programming languages are essential for software development.",
+    "The latest smartphones feature advanced technology.",
+]
+
+travel_sentences = [
+    "Exploring ancient ruins can be a fascinating journey.",
+    "Beaches with crystal-clear waters are ideal for relaxation.",
+    "Hiking trails offer stunning views of nature's beauty.",
+]
+
+# Combine sentences for different groups
+all_sentences = sports_sentences + technology_sentences + travel_sentences
+labels = ['sports'] * len(sports_sentences) + ['technology'] * len(technology_sentences) + ['travel'] * len(travel_sentences)
+colors_map = {'sports': colors[0], 'technology': colors[1], 'travel': colors[2]}
+
+# Tokenize the sentences into words
+tokenized_sentences = [sentence.split() for sentence in all_sentences]
+
+# Train Word2Vec model
+model = Word2Vec(sentences=tokenized_sentences, vector_size=100, window=5, min_count=1, workers=4)
+
+# Visualize word embeddings using t-SNE
+def tsne_plot(model, labels):
+    tokens = []
+    sentence_colors = []
+
+    for i, word in enumerate(model.wv.index_to_key):
+        tokens.append(model.wv[word])
+        token_label = labels[i % len(labels)]  # Cycling through labels
+        sentence_colors.append(colors_map[token_label])
+
+    tsne_model = TSNE(perplexity=40, n_components=2, init='pca', n_iter=2500, random_state=42)
+    new_values = tsne_model.fit_transform(tokens)
+
+    plt.figure(figsize=(16, 9))
+    for i in range(len(new_values)):
+        plt.scatter(new_values[i, 0], new_values[i, 1], color=sentence_colors[i], ec='black', s=55)
+        plt.annotate(model.wv.index_to_key[i], xy=(new_values[i, 0], new_values[i, 1]),
+                     xytext=(5, 4), textcoords='offset points', ha='right', va='bottom')
+
+    # Add legends
+    for category, color in colors_map.items():
+        plt.scatter([], [], color=color, label=category)
+
+    plt.title("Word2Vec representation in 2D space")
+    plt.legend()
+    plt.show()
+
+# Plot the t-SNE visualization
+tsne_plot(model, labels)
+
+```
+
+    /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/sklearn/manifold/_t_sne.py:790: FutureWarning: The default learning rate in TSNE will change from 200.0 to 'auto' in 1.2.
+      warnings.warn(
+    /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/sklearn/manifold/_t_sne.py:982: FutureWarning: The PCA initialization in TSNE will change to have the standard deviation of PC1 equal to 1e-4 in 1.2. This will ensure better convergence.
+      warnings.warn(
+
+
+
+    
+![png](README_files/README_22_1.png)
+    
+
+
+
+```python
+
+```
 Notebooks have been converted and README has been updated.
