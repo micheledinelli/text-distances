@@ -507,7 +507,9 @@ print('distance = %.4f' % distance)
 
 
 ## Shallow Windows
- 
+
+- Word2Vec
+- BERT
 
 
 ```python
@@ -591,6 +593,74 @@ tsne_plot(model, labels)
 
 
 ```python
+from transformers import BertTokenizer, BertModel
+import torch
+
+# Load pre-trained BERT tokenizer and model
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertModel.from_pretrained('bert-base-uncased')
+
+# Tokenize the sentences
+tokenized_sentences = [tokenizer(sentence, return_tensors='pt')['input_ids'][0] for sentence in all_sentences]
+
+# Convert the tokens to a set to keep only unique tokens
+unique_tokens_set = set([token.item() for tokens in tokenized_sentences for token in tokens])
+
+# Convert the set back to a list for joining
+unique_tokens_list = list(unique_tokens_set)
+
+# Join the unique tokens into a string
+bert_corpus_unique_tokens = ' '.join([tokenizer.decode(token) for token in unique_tokens_list])
+
+# Encode a sentence
+tokens = tokenizer(bert_corpus_unique_tokens, return_tensors='pt')
+
+# Obtain the BERT output
+with torch.no_grad():
+    outputs = model(**tokens)
+
+# Get the contextualized embeddings for each token
+embeddings = outputs.last_hidden_state
+```
+
+    Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.seq_relationship.weight', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.transform.dense.weight', 'cls.predictions.transform.LayerNorm.bias', 'cls.predictions.bias', 'cls.predictions.transform.dense.bias', 'cls.seq_relationship.bias']
+    - This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+    - This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+
+
+
+```python
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+
+# Flatten the embeddings for t-SNE
+flat_embeddings = embeddings.squeeze().numpy().reshape(-1, embeddings.shape[-1])
+
+# Apply t-SNE for dimensionality reduction
+tsne = TSNE(n_components=2, random_state=42)
+embeddings_2d = tsne.fit_transform(flat_embeddings)
+
+# Plot the 2D embeddings
+plt.figure(figsize=(10, 8))
+for i, token in enumerate(tokenizer.convert_ids_to_tokens(tokens['input_ids'][0])):
+    plt.scatter(embeddings_2d[i, 0], embeddings_2d[i, 1])
+    plt.annotate(token, xy=(embeddings_2d[i, 0], embeddings_2d[i, 1]), xytext=(5, 2),
+                 textcoords='offset points', ha='right', va='bottom')
+
+plt.title('t-SNE Visualization of BERT Embeddings')
+plt.show()
 
 ```
+
+    /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/sklearn/manifold/_t_sne.py:780: FutureWarning: The default initialization in TSNE will change from 'random' to 'pca' in 1.2.
+      warnings.warn(
+    /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/sklearn/manifold/_t_sne.py:790: FutureWarning: The default learning rate in TSNE will change from 200.0 to 'auto' in 1.2.
+      warnings.warn(
+
+
+
+    
+![png](README_files/README_24_1.png)
+    
+
 Notebooks have been converted and README has been updated.
