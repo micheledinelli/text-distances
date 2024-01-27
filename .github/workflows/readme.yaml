@@ -38,6 +38,8 @@ jobs:
           # Append a message to the README
           echo 'Notebooks have been converted and README has been updated.' >> README.md
 
+          echo '[![Run nbconvert](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml/badge.svg?branch=main)](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml)'
+
       - name: Push changes
         run: |
           git add README.md
