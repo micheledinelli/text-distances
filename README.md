@@ -1,5 +1,7 @@
 # A comparison of text distance algorithms
 
+[![Run nbconvert](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml/badge.svg)](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml)
+
 
 ```python
 import numpy as np
