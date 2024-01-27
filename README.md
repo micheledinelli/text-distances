@@ -1,5 +1,6 @@
 # A comparison of text distance algorithms
 
+
 ```python
 import numpy as np
 import pandas as pd
@@ -13,6 +14,7 @@ plt.style.use("style.mplstyle")
 
 colors = ["#003f5c", "#d45087", "#ffa600", "#665191", "#ff7c43", "#2f4b7c", "#f95d6a", "#a05195"]
 ```
+
 
 ```python
 s1 = "Obama speaks to the media in Illinois"
@@ -29,12 +31,15 @@ vectorizer.fit(corpus)
 matrix = vectorizer.fit_transform(corpus)
 
 table = matrix.todense()
-df = pd.DataFrame(table,
-                  columns=vectorizer.get_feature_names_out(),
+df = pd.DataFrame(table, 
+                  columns=vectorizer.get_feature_names_out(), 
                   index=['text_1', 'text_2', 'text_3', 'text_4', 'text_5'])
 
 df.head()
 ```
+
+
+
 
 <div>
 <style scoped>
@@ -49,7 +54,6 @@ df.head()
     .dataframe thead th {
         text-align: right;
     }
-
 </style>
 <table border="1" class="dataframe">
   <thead>
@@ -161,7 +165,10 @@ df.head()
 </table>
 </div>
 
+
+
 ## Text distance algorithms
+
 
 ```python
 def euclidean_distance(s1, s2, vectorizer):
@@ -190,6 +197,7 @@ def hamming_distance(s1, s2, vectorizer):
     return distance
 ```
 
+
 ```python
 def plot_distances(s1: str, s2: str, vectorizer, ax=None):
     if ax:
@@ -213,7 +221,7 @@ def plot_distances(s1: str, s2: str, vectorizer, ax=None):
         ax.text(s2, cosine_dist, f'{s2}\n({cosine_dist:.2f}, {cosine_dist:.2f})', ha='center', va='bottom')
         ax.text(s2, manhattan_dist, f'{s2}\n({manhattan_dist:.2f}, {manhattan_dist:.2f})', ha='center', va='bottom')
         ax.legend()
-
+        
     else:
         # Calculate distances
         euclidean_dist = euclidean_distance(s1, s2, vectorizer)
@@ -250,11 +258,17 @@ def plot_distances(s1: str, s2: str, vectorizer, ax=None):
 
 ```
 
+
 ```python
 plot_distances(s1, s2, vectorizer=vectorizer)
 ```
 
+
+    
 ![png](README_files/README_6_0.png)
+    
+
+
 
 ```python
 # Create a figure with subplots
@@ -275,9 +289,14 @@ plt.tight_layout(rect=[0.1, 0.1, 0.9, 0.95])
 plt.show()
 ```
 
+
+    
 ![png](README_files/README_7_0.png)
+    
+
 
 ### Distribution distance
+
 
 ```python
 import re
@@ -300,32 +319,33 @@ def js_divergence(p, q):
 def js_divergence_between_sentences(sentence1, sentence2):
     distribution1 = get_distribution(sentence1)
     distribution2 = get_distribution(sentence2)
-
+    
     # Ensure all words in both distributions
     all_words = set(list(distribution1.keys()) + list(distribution2.keys()))
     distribution1 = {word: distribution1.get(word, 0) for word in all_words}
     distribution2 = {word: distribution2.get(word, 0) for word in all_words}
-
+    
     jsd = js_divergence(distribution1, distribution2)
     return jsd
 ```
+
 
 ```python
 def plot_distributions(ax, s1: str, s2: str):
     distribution1 = get_distribution(s1)
     distribution2 = get_distribution(s2)
-
+    
     # Get all unique words from both distributions
     all_words = list(set(distribution1.keys()) | set(distribution2.keys()))
-
+    
     # Create arrays for word frequencies in both distributions
     freq1 = np.array([distribution1.get(word, 0) for word in all_words])
     freq2 = np.array([distribution2.get(word, 0) for word in all_words])
-
+    
     # Plot bar charts for each distribution
     ax.bar(all_words, freq1, alpha=0.7, label=s1, color=colors[0], ec="black")
     ax.bar(all_words, freq2, alpha=0.7, label=s2, color=colors[2], bottom=freq1, ec="black")
-
+    
     # Set labels and title
     ax.set_xlabel('Words')
     ax.set_ylabel('Word Frequency')
@@ -340,13 +360,18 @@ fig.text(0.5, -0.05, string, ha='center', va='bottom', fontsize=14)
 plt.show()
 ```
 
+
+    
 ![png](README_files/README_10_0.png)
+    
+
 
 ### Semantic distance
 
 ## Text Representation
 
 ### TF-IDF
+
 
 ```python
 import seaborn as sns
@@ -392,11 +417,17 @@ plt.show()
 print(documents)
 ```
 
+
+    
 ![png](README_files/README_14_0.png)
+    
+
 
     ['This is the first document.', 'This document is the second document.', 'And this is the third one.', 'Is this the first document?']
 
+
 ### Word Mover's distance
+
 
 ```python
 from nltk.corpus import stopwords
@@ -409,6 +440,7 @@ def preprocess(sentence):
     return [w for w in sentence.lower().split() if w not in stop_words]
 ```
 
+
 ```python
 sentence_obama = preprocess(s1)
 sentence_president = preprocess(s2)
@@ -418,3 +450,5 @@ print('distance = %.4f' % distance)
 ```
 
     distance = 1.0175
+
+Notebooks have been converted and README has been updated.
