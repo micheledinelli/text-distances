@@ -18,6 +18,11 @@ jobs:
         with:
           python-version: 3.7
 
+      - name: Configure Git
+        run: |
+          git config user.email "dinellimichele00@gmail.com"
+          git config user.name "micheledinelli"
+
       - name: Install dependencies
         run: |
           pip install nbconvert
