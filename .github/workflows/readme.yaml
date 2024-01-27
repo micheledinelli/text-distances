@@ -9,6 +9,9 @@ jobs:
   convert_notebooks:
     runs-on: ubuntu-latest
 
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -40,5 +43,3 @@ jobs:
           git add README.md
           git commit -m "Update README after notebook conversion"
           git push https://$GH_TOKEN@github.com/micheledinelli/text-distances.git HEAD:main
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
