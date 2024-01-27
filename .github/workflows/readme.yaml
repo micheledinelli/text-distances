@@ -24,5 +24,13 @@ jobs:
 
       - name: Run nbconvert
         run: |
-          # Convert all notebooks in the repository
-          jupyter nbconvert --to markdown --execute "text-distance-analysis.ipynb"
+          # Convert the notebook to markdown and update README
+          jupyter nbconvert --to markdown text-distance-analysis.ipynb --output README.md
+
+          # Append a message to the README
+          echo 'Notebooks have been converted and README has been updated.' >> README.md
+
+          # Commit the changes
+          git add README.md
+          git commit -m "Update README after notebook conversion"
+          git push
