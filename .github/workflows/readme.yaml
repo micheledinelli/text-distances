@@ -1,0 +1,28 @@
+name: Run nbconvert
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  convert_notebooks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install dependencies
+        run: |
+          pip install nbconvert
+
+      - name: Run nbconvert
+        run: |
+          # Convert all notebooks in the repository
+          jupyter nbconvert --to markdown --execute "text-distance-analysis.ipynb"
