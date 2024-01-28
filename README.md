@@ -600,20 +600,10 @@ import torch
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 
-# Tokenize the sentences
-tokenized_sentences = [tokenizer(sentence, return_tensors='pt')['input_ids'][0] for sentence in all_sentences]
-
-# Convert the tokens to a set to keep only unique tokens
-unique_tokens_set = set([token.item() for tokens in tokenized_sentences for token in tokens])
-
-# Convert the set back to a list for joining
-unique_tokens_list = list(unique_tokens_set)
-
-# Join the unique tokens into a string
-bert_corpus_unique_tokens = ' '.join([tokenizer.decode(token) for token in unique_tokens_list])
+bert_corpus = ' '.join(all_sentences)
 
 # Encode a sentence
-tokens = tokenizer(bert_corpus_unique_tokens, return_tensors='pt')
+tokens = tokenizer(bert_corpus, return_tensors='pt')
 
 # Obtain the BERT output
 with torch.no_grad():
@@ -663,4 +653,6 @@ plt.show()
 ![png](README_files/README_24_1.png)
     
 
+
+## Matrix factorization methods
 Notebooks have been converted and README has been updated.
