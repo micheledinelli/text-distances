@@ -655,3 +655,4 @@ plt.show()
 
 
 ## Matrix factorization methods
+Notebooks have been converted and README has been updated.
