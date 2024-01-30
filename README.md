@@ -655,4 +655,159 @@ plt.show()
 
 
 ## Matrix factorization methods
+
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
+import numpy as np
+import pprint
+
+# Sample documents
+documents = [
+    "I love natural language processing with Python",
+    "Text similarity and clustering are interesting",
+    "Latent Semantic Analysis is a powerful technique",
+    "Python is a popular programming language for data science",
+]
+
+# Step 1: Create a TF-IDF matrix
+vectorizer = TfidfVectorizer(stop_words='english')
+tfidf_matrix = vectorizer.fit_transform(documents)
+
+# Display the TF-IDF matrix
+print("Corpus:\n")
+for doc in documents:
+    print(doc)
+print("")
+print("TF-IDF Matrix:")
+pprint.pprint(tfidf_matrix.toarray())
+print()
+```
+
+    Corpus:
+    
+    I love natural language processing with Python
+    Text similarity and clustering are interesting
+    Latent Semantic Analysis is a powerful technique
+    Python is a popular programming language for data science
+    
+    TF-IDF Matrix:
+    array([[0.        , 0.        , 0.        , 0.        , 0.38274272,
+            0.        , 0.48546061, 0.48546061, 0.        , 0.        ,
+            0.48546061, 0.        , 0.38274272, 0.        , 0.        ,
+            0.        , 0.        , 0.        ],
+           [0.        , 0.5       , 0.        , 0.5       , 0.        ,
+            0.        , 0.        , 0.        , 0.        , 0.        ,
+            0.        , 0.        , 0.        , 0.        , 0.        ,
+            0.5       , 0.        , 0.5       ],
+           [0.4472136 , 0.        , 0.        , 0.        , 0.        ,
+            0.4472136 , 0.        , 0.        , 0.        , 0.4472136 ,
+            0.        , 0.        , 0.        , 0.        , 0.4472136 ,
+            0.        , 0.4472136 , 0.        ],
+           [0.        , 0.        , 0.43671931, 0.        , 0.34431452,
+            0.        , 0.        , 0.        , 0.43671931, 0.        ,
+            0.        , 0.43671931, 0.34431452, 0.43671931, 0.        ,
+            0.        , 0.        , 0.        ]])
+    
+
+
+
+```python
+# Step 2: Apply SVD to reduce dimensionality
+num_topics = 2
+svd_model = TruncatedSVD(n_components=num_topics)
+lsa_matrix = svd_model.fit_transform(tfidf_matrix)
+
+# Display the SVD components
+print("SVD Components:")
+print("U Matrix:")
+print(svd_model.components_)
+print("\nSigma (Singular Values):")
+print(svd_model.singular_values_)
+print("\nV^T Matrix:")
+print(svd_model.transform(tfidf_matrix))
+print()
+
+# Display the reduced-dimensional LSA matrix
+print("LSA Matrix:")
+print(lsa_matrix)
+print()
+```
+
+    SVD Components:
+    U Matrix:
+    [[ 3.71972105e-16 -7.47229428e-17  2.74718641e-01 -6.07495735e-17
+       4.57355957e-01  2.18332954e-16  3.05379398e-01  3.05379398e-01
+       2.74718641e-01  2.18332954e-16  3.05379398e-01  2.74718641e-01
+       4.57355957e-01  2.74718641e-01  2.18332954e-16 -6.35633637e-17
+       2.18332954e-16 -6.35633637e-17]
+     [ 2.48069469e-01  4.16025147e-01 -2.66934943e-17  4.16025147e-01
+      -2.38237894e-18  2.48069469e-01  1.94805522e-17  1.94805522e-17
+       1.06208130e-18  2.48069469e-01  1.94805522e-17  1.06208130e-18
+      -2.38237894e-18  1.06208130e-18  2.48069469e-01  4.16025147e-01
+       2.48069469e-01  4.16025147e-01]]
+    
+    Sigma (Singular Values):
+    [1.1240853 1.       ]
+    
+    V^T Matrix:
+    [[ 7.94848336e-01  2.65474460e-17]
+     [-1.31299622e-16  8.32050294e-01]
+     [ 5.56916844e-16  5.54700196e-01]
+     [ 7.94848336e-01 -1.19066455e-17]]
+    
+    LSA Matrix:
+    [[ 7.94848336e-01  2.65474460e-17]
+     [-1.31299622e-16  8.32050294e-01]
+     [ 5.56916844e-16  5.54700196e-01]
+     [ 7.94848336e-01 -1.19066455e-17]]
+    
+
+
+
+```python
+# Step 3: Calculate cosine similarity between documents in the reduced space
+from sklearn.metrics.pairwise import cosine_similarity
+similarity_matrix = cosine_similarity(lsa_matrix, lsa_matrix)
+
+# Display the cosine similarity matrix
+print("Cosine Similarity Matrix:")
+print(similarity_matrix)
+```
+
+    Cosine Similarity Matrix:
+    [[ 1.00000000e+00 -1.24403121e-16  1.03739550e-15  1.00000000e+00]
+     [-1.24403121e-16  1.00000000e+00  1.00000000e+00 -1.72782277e-16]
+     [ 1.03739550e-15  1.00000000e+00  1.00000000e+00  9.89016349e-16]
+     [ 1.00000000e+00 -1.72782277e-16  9.89016349e-16  1.00000000e+00]]
+
+
+
+```python
+import matplotlib.pyplot as plt
+
+# Visualize the documents in the reduced space
+plt.figure(figsize=(8, 6))
+for i in range(len(documents)):
+    plt.scatter(lsa_matrix[i, 0], lsa_matrix[i, 1], label=f"Document {i + 1}")
+
+plt.title("LSA Visualization")
+plt.xlabel("LSA Component 1")
+plt.ylabel("LSA Component 2")
+
+# Annotate points with document labels
+for i, txt in enumerate(documents):
+    plt.annotate(txt, (lsa_matrix[i, 0], lsa_matrix[i, 1]))
+
+plt.legend()
+plt.show()
+
+```
+
+
+    
+![png](README_files/README_29_0.png)
+    
+
 Notebooks have been converted and README has been updated.
