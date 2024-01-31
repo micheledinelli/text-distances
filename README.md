@@ -7,14 +7,108 @@
 import numpy as np
 import pandas as pd
 
+import re
+from collections import Counter
+
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+import seaborn as sns
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from scipy.stats import wasserstein_distance
+from scipy.stats import entropy
+from scipy.special import rel_entr
+
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+
+# Download the necessary NLTK data
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('punkt')
+
 plt.style.use("style.mplstyle")
 
 colors = ["#003f5c", "#d45087", "#ffa600", "#665191", "#ff7c43", "#2f4b7c", "#f95d6a", "#a05195"]
+
+cmap = ListedColormap(sns.color_palette(colors).as_hex())
+```
+
+    [nltk_data] Downloading package punkt to
+    [nltk_data]     /Users/micheledinelli/nltk_data...
+    [nltk_data]   Package punkt is already up-to-date!
+    [nltk_data] Downloading package stopwords to
+    [nltk_data]     /Users/micheledinelli/nltk_data...
+    [nltk_data]   Package stopwords is already up-to-date!
+    [nltk_data] Downloading package punkt to
+    [nltk_data]     /Users/micheledinelli/nltk_data...
+    [nltk_data]   Package punkt is already up-to-date!
+
+
+## Text distance
+```
+.
+└── Text distance
+    ├── Length distance
+    │   ├── Euclidean distance
+    │   ├── Cosine distance
+    │   ├── Manhattan distance
+    │   └── Hamming distance
+    ├── Distribution distance
+    │   ├── JS divergence
+    │   ├── KL divergence
+    │   └── Wasserstein distance
+    └── Semantic distance
+        ├── Word mover's distance
+        └── Word mover's distance extension
+```
+
+
+```python
+# import spacy
+# import plotly.express as px
+
+# # Load the English language model
+# nlp = spacy.load("en_core_web_md")
+
+# # Define the words for which you want vectors
+# words = ["man", "woman", "king", "queen"]
+
+# # Get the vectors for each word
+# vectors = [nlp(word).vector for word in words]
+
+# # Perform the vector operation (King - Man + Woman)
+# result_vector = nlp("king").vector - nlp("man").vector + nlp("woman").vector
+
+# # Combine the word vectors and result vector
+# all_vectors = vectors + [result_vector]
+
+# # Use PCA to reduce the dimensionality to 3 for visualization
+# pca = PCA(n_components=3)
+# vectors_3d = pca.fit_transform(all_vectors)
+
+# # Create a DataFrame for visualization
+# import pandas as pd
+# df = pd.DataFrame(vectors_3d, columns=['PC1', 'PC2', 'PC3'])
+# df['Word'] = words + ['King - Man + Woman']
+
+# # Plot the 3D vectors
+# fig = px.scatter_3d(df, x='PC1', y='PC2', z='PC3', text='Word')
+
+# # Update the layout for better visibility
+# fig.update_layout(title="Word Vectors Visualization with Result Vector",
+#                   scene=dict(xaxis_title='Principal Component 1',
+#                              yaxis_title='Principal Component 2',
+#                              zaxis_title='Principal Component 3'))
+
+# # Show the plot
+# fig.show()
+
 ```
 
 
@@ -23,8 +117,9 @@ s1 = "Obama speaks to the media in Illinois"
 s2 = "The president greets the press in Chicago"
 s3 = "Duck"
 s4 = "Cool"
+s5 = "Rest"
 
-corpus = [s1, s2, s3, s4]
+corpus = [s1, s2, s3, s4, s5]
 
 vectorizer = CountVectorizer()
 vectorizer.fit(corpus)
@@ -34,7 +129,7 @@ matrix = vectorizer.fit_transform(corpus)
 table = matrix.todense()
 df = pd.DataFrame(table, 
                   columns=vectorizer.get_feature_names_out(), 
-                  index=['text_1', 'text_2', 'text_3', 'text_4'])
+                  index=[f"s{i+1}" for i in range(len(corpus))])
 
 df.head()
 ```
@@ -70,6 +165,7 @@ df.head()
       <th>obama</th>
       <th>president</th>
       <th>press</th>
+      <th>rest</th>
       <th>speaks</th>
       <th>the</th>
       <th>to</th>
@@ -77,7 +173,7 @@ df.head()
   </thead>
   <tbody>
     <tr>
-      <th>text_1</th>
+      <th>s1</th>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -86,6 +182,7 @@ df.head()
       <td>1</td>
       <td>1</td>
       <td>1</td>
+      <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>1</td>
@@ -93,7 +190,7 @@ df.head()
       <td>1</td>
     </tr>
     <tr>
-      <th>text_2</th>
+      <th>s2</th>
       <td>1</td>
       <td>0</td>
       <td>0</td>
@@ -104,15 +201,17 @@ df.head()
       <td>0</td>
       <td>1</td>
       <td>1</td>
+      <td>0</td>
       <td>0</td>
       <td>2</td>
       <td>0</td>
     </tr>
     <tr>
-      <th>text_3</th>
+      <th>s3</th>
       <td>0</td>
       <td>0</td>
       <td>1</td>
+      <td>0</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -125,7 +224,7 @@ df.head()
       <td>0</td>
     </tr>
     <tr>
-      <th>text_4</th>
+      <th>s4</th>
       <td>0</td>
       <td>1</td>
       <td>0</td>
@@ -136,6 +235,24 @@ df.head()
       <td>0</td>
       <td>0</td>
       <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>s5</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
@@ -146,7 +263,9 @@ df.head()
 
 
 
-## Text distance algorithms
+### Length Distance
+
+#### Algorithms
 
 
 ```python
@@ -169,12 +288,25 @@ def manhattan_distance(s1, s2, vectorizer):
     distance = np.sum(np.abs(vector1 - vector2))
     return distance
 
-def hamming_distance(s1, s2, vectorizer):
-    vector1 = vectorizer.transform([s1]).toarray()
-    vector2 = vectorizer.transform([s2]).toarray()
-    distance = np.sum(vector1 != vector2)
-    return distance
+def hamming_distance(s1, s2):
+    if len(s1) != len(s2):
+        raise ValueError("Both strings must be of the same length")
+    return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
 ```
+
+
+```python
+print(f"Euclidean distance between {s3} and {s4}: {euclidean_distance(s3, s4, vectorizer):.2f}")
+print(f"Cosine distance between {s3} and {s4}: {cosine_distance(s3, s4, vectorizer):.2f}")
+print(f"Manhattan distance between {s3} and {s4}: {manhattan_distance(s3, s4, vectorizer):.2f}")
+print(f"Hamming distance between {s3} and {s4}: {hamming_distance(s3, s4):.2f}")
+```
+
+    Euclidean distance between Duck and Cool: 1.41
+    Cosine distance between Duck and Cool: 1.00
+    Manhattan distance between Duck and Cool: 2.00
+    Hamming distance between Duck and Cool: 4.00
+
 
 
 ```python
@@ -200,12 +332,24 @@ def plot_distances(s1: str, s2: str, vectorizer, ax=None):
         ax.text(s2, cosine_dist, f'{s2}\n({cosine_dist:.2f}, {cosine_dist:.2f})', ha='center', va='bottom')
         ax.text(s2, manhattan_dist, f'{s2}\n({manhattan_dist:.2f}, {manhattan_dist:.2f})', ha='center', va='bottom')
         ax.legend()
+
+        if (len(s1) == len(s2)):
+            hamming_dist = hamming_distance(s1, s2)
+            ax.scatter([s1, s2], [0, hamming_dist], label='Hamming', color=colors[3])
+            ax.plot([s1, s2], [0, hamming_dist], linestyle='-', color=colors[3])
+            ax.text(s2, hamming_dist, f'{s2}\n({hamming_dist:.2f}, {hamming_dist:.2f})', ha='center', va='bottom')
         
     else:
         # Calculate distances
         euclidean_dist = euclidean_distance(s1, s2, vectorizer)
         cosine_dist = cosine_distance(s1, s2, vectorizer)
         manhattan_dist = manhattan_distance(s1, s2, vectorizer)
+
+        if len(s1) == len(s2):
+            hamming_dist = hamming_distance(s1, s2)
+            plt.scatter([s1, s2], [0, hamming_dist], label='Hamming', color=colors[3])
+            plt.plot([s1, s2], [0, hamming_dist], linestyle='-', color=colors[3])
+            plt.text(s2, hamming_dist, f'{s2}\n({hamming_dist:.2f}, {hamming_dist:.2f})', ha='center', va='bottom')
 
         # Create a scatter plot
         plt.scatter([s1, s2], [0, euclidean_dist], label='Euclidean', color=colors[0])
@@ -239,17 +383,6 @@ def plot_distances(s1: str, s2: str, vectorizer, ax=None):
 
 
 ```python
-plot_distances(s1, s2, vectorizer=vectorizer)
-```
-
-
-    
-![png](README_files/README_6_0.png)
-    
-
-
-
-```python
 # Create a figure with subplots
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
@@ -270,86 +403,220 @@ plt.show()
 
 
     
-![png](README_files/README_7_0.png)
+![png](README_files/README_10_0.png)
     
 
 
 ### Distribution distance
 
+#### Algorithms
+
 
 ```python
-import re
-from collections import Counter
+def kl_divergence(doc1, doc2):
+    # Tokenize documents into words
+    words1 = word_tokenize(doc1)
+    words2 = word_tokenize(doc2)
 
-def get_distribution(text):
-    words = re.findall(r'\b\w+\b', text.lower())
-    word_count = len(words)
-    distribution = Counter(words)
-    distribution = {word: count / word_count for word, count in distribution.items()}
-    return distribution
+    # Compute word frequencies for each document
+    freq1 = Counter(words1)
+    freq2 = Counter(words2)
 
-def kl_divergence(p, q):
-    return sum(p[word] * np.log2(p[word] / q[word]) for word in p.keys() if p[word] > 0 and q[word] > 0)
+    # Combine all unique words from both documents
+    all_words = set(freq1.keys()) | set(freq2.keys())
 
-def js_divergence(p, q):
-    m = {word: 0.5 * (p[word] + q[word]) for word in p.keys() & q.keys()}
-    return 0.5 * (kl_divergence(p, m) + kl_divergence(q, m))
+    # Convert frequencies to probabilities
+    total1 = len(words1)
+    total2 = len(words2)
+    prob1 = {word: (freq1[word] + 1) / (total1 + len(all_words)) for word in all_words}
+    prob2 = {word: (freq2[word] + 1) / (total2 + len(all_words)) for word in all_words}
 
-def js_divergence_between_sentences(sentence1, sentence2):
-    distribution1 = get_distribution(sentence1)
-    distribution2 = get_distribution(sentence2)
-    
-    # Ensure all words in both distributions
-    all_words = set(list(distribution1.keys()) + list(distribution2.keys()))
-    distribution1 = {word: distribution1.get(word, 0) for word in all_words}
-    distribution2 = {word: distribution2.get(word, 0) for word in all_words}
-    
-    jsd = js_divergence(distribution1, distribution2)
-    return jsd
+    # Compute KL divergence using scipy.stats.entropy
+    kl_divergence = entropy(list(prob1.values()), qk=list(prob2.values()))
+
+    return kl_divergence
+
+def js_divergence(doc1, doc2):
+    # Tokenize documents into words
+    words1 = word_tokenize(doc1)
+    words2 = word_tokenize(doc2)
+
+    # Compute word frequencies for each document
+    freq1 = Counter(words1)
+    freq2 = Counter(words2)
+
+    # Combine all unique words from both documents
+    all_words = set(freq1.keys()) | set(freq2.keys())
+
+    # Convert frequencies to probabilities
+    total1 = len(words1)
+    total2 = len(words2)
+    prob1 = {word: (freq1[word] + 1) / (total1 + len(all_words)) for word in all_words}
+    prob2 = {word: (freq2[word] + 1) / (total2 + len(all_words)) for word in all_words}
+
+    # Compute average probabilities
+    avg_prob = {word: (prob1[word] + prob2[word]) / 2 for word in all_words}
+
+    # Compute JS divergence using KL divergence
+    js_divergence = (entropy(list(prob1.values()), qk=list(avg_prob.values())) +
+                     entropy(list(prob2.values()), qk=list(avg_prob.values()))) / 2
+
+    return js_divergence
+
+def calculate_wasserstein_distance(doc1, doc2):
+    # Tokenize documents into words
+    words1 = word_tokenize(doc1)
+    words2 = word_tokenize(doc2)
+
+    # Compute word frequencies for each document
+    freq1 = Counter(words1)
+    freq2 = Counter(words2)
+
+    # Combine all unique words from both documents
+    all_words = set(freq1.keys()) | set(freq2.keys())
+
+    # Create distributions for the words in each document
+    dist1 = [freq1[word] / len(words1) for word in all_words]
+    dist2 = [freq2[word] / len(words2) for word in all_words]
+
+    # Compute Wasserstein distance
+    wasserstein_dist = wasserstein_distance(dist1, dist2)
+
+    return wasserstein_dist
+
+def get_distribution(document):
+    # Split the document into words, convert to lower case, and count frequencies
+    words = re.findall(r'\b\w+\b', document.lower())
+    return Counter(words)
+
+# Initialize a Porter stemmer
+stemmer = PorterStemmer()
+
+# Define a function to preprocess a document
+def preprocess(document):
+    # Tokenize the document
+    words = word_tokenize(document)
+
+    # Remove stopwords and stem the words
+    words = [word for word in words if word not in stopwords.words('english')]
+
+    # Join the words back into a string
+    document = ' '.join(words)
+
+    # Return the preprocessed document
+    return document
 ```
 
 
 ```python
-def plot_distributions(ax, s1: str, s2: str):
-    distribution1 = get_distribution(s1)
-    distribution2 = get_distribution(s2)
-    
-    # Get all unique words from both distributions
-    all_words = list(set(distribution1.keys()) | set(distribution2.keys()))
-    
-    # Create arrays for word frequencies in both distributions
-    freq1 = np.array([distribution1.get(word, 0) for word in all_words])
-    freq2 = np.array([distribution2.get(word, 0) for word in all_words])
-    
-    # Plot bar charts for each distribution
-    ax.bar(all_words, freq1, alpha=0.7, label=s1, color=colors[0], ec="black")
-    ax.bar(all_words, freq2, alpha=0.7, label=s2, color=colors[2], bottom=freq1, ec="black")
-    
-    # Set labels and title
-    ax.set_xlabel('Words')
-    ax.set_ylabel('Word Frequency')
-    ax.set_title('Distributions of Sentences')
-    ax.legend()
+document1 = """
+The cat sat on the mat. The cat played with a ball of yarn. It loves the ball and the yarn.
+The cat is a happy cat. A really happy cat.
+"""
+document2 = "Advanced algorithms are key for successful machine learning."
 
-fig, ax = plt.subplots(figsize=(14, 7))
-plot_distributions(ax, s1, s2)
+# Preprocess the documents
+document1 = preprocess(document1)
+document2 = preprocess(document2)
 
-string = f'Js divergence {js_divergence_between_sentences(s1, s2)}'
-fig.text(0.5, -0.05, string, ha='center', va='bottom', fontsize=14)
+kl_divergence_result = kl_divergence(document1, document2)
+js_divergence_result = js_divergence(document1, document2)
+wasserstein_distance_result = calculate_wasserstein_distance(document1, document2)
+
+print(f"KL divergence between documents: {kl_divergence_result:.3f}")
+print(f"JS divergence between documents: {js_divergence_result:.3f}")
+print(f"Wasserstein distance between documents: {wasserstein_distance_result:.3f}") 
+```
+
+    KL divergence between documents: 0.303
+    JS divergence between documents: 0.077
+    Wasserstein distance between documents: 0.035
+
+
+
+```python
+distribution1 = get_distribution(document1)
+distribution2 = get_distribution(document2)
+
+# Get all unique words from both distributions
+all_words = list(set(distribution1.keys()) | set(distribution2.keys()))
+
+# Create arrays for word frequencies in both distributions
+freq1 = np.array([distribution1.get(word, 0) for word in all_words])
+freq2 = np.array([distribution2.get(word, 0) for word in all_words])
+
+# Create a DataFrame for Seaborn
+df = pd.DataFrame({
+    'Words': all_words,
+    document1: freq1,
+    document2: freq2
+})
+
+# Melt the DataFrame to have a format suitable for Seaborn
+df_melted = df.melt(id_vars='Words', var_name='Sentence', value_name='Frequency')
+# Plot KDE plots for each distribution
+plt.figure(figsize=(16, 8))
+sns.kdeplot(data=df_melted, x='Frequency', hue='Sentence', fill=True)
+
+kl_divergence_result = kl_divergence(document1, document2)
+js_divergence_result = js_divergence(document1, document2)
+wasserstein_distance_result = calculate_wasserstein_distance(document1, document2)
+
+plt.annotate(f'Js divergence: {js_divergence_result:.2f}', (0.05, 0.95), xycoords='axes fraction')
+plt.annotate(f'Kl divergence: {kl_divergence_result:.2f}', (0.05, 0.90), xycoords='axes fraction')
+plt.annotate(f'Wassertein distance: {wasserstein_distance_result:.2f}', (0.05, 0.85), xycoords='axes fraction')
+
+# Set labels and title
+plt.xlabel('Word Frequency')
+plt.title('Distributions of Sentences')
 plt.show()
 ```
 
 
     
-![png](README_files/README_10_0.png)
+![png](README_files/README_15_0.png)
     
 
 
 ### Semantic distance
 
-## Text Representation
 
-### LCS
+```python
+from gensim.models import KeyedVectors
+
+word2vec_path = '/Users/micheledinelli/gensim-data/word2vec-google-news-300/word2vec-google-news-300.gz'
+w2v_model = KeyedVectors.load_word2vec_format(word2vec_path, binary=True)
+```
+
+
+```python
+document1 = "the cat sat on the mat."
+document2 = "the dog sat on the mat."
+```
+
+
+```python
+# Create a matrix of word distances
+word_distances = np.zeros((len(document1.split()), len(document2.split())))
+for i, word1 in enumerate(document1.split()):
+    for j, word2 in enumerate(document2.split()):
+        word_distances[i, j] = w2v_model.wmdistance(word1, word2)
+
+# Create a heatmap of word distances
+plt.figure(figsize=(10, 8))
+sns.heatmap(word_distances, annot=True, cmap="rocket", xticklabels=document2.split(), yticklabels=document1.split())
+plt.title('Word Mover\'s Distance')
+plt.xlabel('Document 2')
+plt.ylabel('Document 1')
+plt.show()
+
+```
+
+
+    
+![png](README_files/README_19_0.png)
+    
+
 
 
 ```python
@@ -420,7 +687,7 @@ visualize_lcs_matrix(s4, "whool", lcs_matrix, lcs_sequence)
 
 
     
-![png](README_files/README_15_1.png)
+![png](README_files/README_21_1.png)
     
 
 
@@ -473,7 +740,7 @@ print(documents)
 
 
     
-![png](README_files/README_17_0.png)
+![png](README_files/README_23_0.png)
     
 
 
@@ -587,7 +854,7 @@ tsne_plot(model, labels)
 
 
     
-![png](README_files/README_22_1.png)
+![png](README_files/README_28_1.png)
     
 
 
@@ -613,7 +880,7 @@ with torch.no_grad():
 embeddings = outputs.last_hidden_state
 ```
 
-    Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.seq_relationship.weight', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.transform.dense.weight', 'cls.predictions.transform.LayerNorm.bias', 'cls.predictions.bias', 'cls.predictions.transform.dense.bias', 'cls.seq_relationship.bias']
+    Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.predictions.transform.LayerNorm.bias', 'cls.predictions.bias', 'cls.predictions.transform.dense.weight', 'cls.seq_relationship.bias', 'cls.seq_relationship.weight', 'cls.predictions.transform.dense.bias', 'cls.predictions.transform.LayerNorm.weight']
     - This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
     - This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
 
@@ -650,7 +917,7 @@ plt.show()
 
 
     
-![png](README_files/README_24_1.png)
+![png](README_files/README_30_1.png)
     
 
 
@@ -737,31 +1004,31 @@ print()
 
     SVD Components:
     U Matrix:
-    [[ 3.71972105e-16 -7.47229428e-17  2.74718641e-01 -6.07495735e-17
-       4.57355957e-01  2.18332954e-16  3.05379398e-01  3.05379398e-01
-       2.74718641e-01  2.18332954e-16  3.05379398e-01  2.74718641e-01
-       4.57355957e-01  2.74718641e-01  2.18332954e-16 -6.35633637e-17
-       2.18332954e-16 -6.35633637e-17]
-     [ 2.48069469e-01  4.16025147e-01 -2.66934943e-17  4.16025147e-01
-      -2.38237894e-18  2.48069469e-01  1.94805522e-17  1.94805522e-17
-       1.06208130e-18  2.48069469e-01  1.94805522e-17  1.06208130e-18
-      -2.38237894e-18  1.06208130e-18  2.48069469e-01  4.16025147e-01
-       2.48069469e-01  4.16025147e-01]]
+    [[-2.94802673e-16 -1.29564860e-16  2.74718641e-01 -1.41119974e-16
+       4.57355957e-01 -5.71624846e-16  3.05379398e-01  3.05379398e-01
+       2.74718641e-01 -5.71624846e-16  3.05379398e-01  2.74718641e-01
+       4.57355957e-01  2.74718641e-01 -5.71624846e-16 -1.40286894e-16
+      -5.71624846e-16 -1.40286894e-16]
+     [ 4.19138354e-01  1.74366856e-01  6.31659656e-16  1.74366856e-01
+       2.60518730e-16  4.19138354e-01 -1.60791873e-16 -1.60791873e-16
+       4.96734033e-16  4.19138354e-01 -1.60791873e-16  4.96734033e-16
+       2.60518730e-16  4.96734033e-16  4.19138354e-01  1.74366856e-01
+       4.19138354e-01  1.74366856e-01]]
     
     Sigma (Singular Values):
     [1.1240853 1.       ]
     
     V^T Matrix:
-    [[ 7.94848336e-01  2.65474460e-17]
-     [-1.31299622e-16  8.32050294e-01]
-     [ 5.56916844e-16  5.54700196e-01]
-     [ 7.94848336e-01 -1.19066455e-17]]
+    [[ 7.94848336e-01 -3.47510668e-17]
+     [-2.75629311e-16  3.48733712e-01]
+     [-1.15439337e-15  9.37221851e-01]
+     [ 7.94848336e-01  1.10605876e-15]]
     
     LSA Matrix:
-    [[ 7.94848336e-01  2.65474460e-17]
-     [-1.31299622e-16  8.32050294e-01]
-     [ 5.56916844e-16  5.54700196e-01]
-     [ 7.94848336e-01 -1.19066455e-17]]
+    [[ 7.94848336e-01 -3.47510668e-17]
+     [-2.75629311e-16  3.48733712e-01]
+     [-1.15439337e-15  9.37221851e-01]
+     [ 7.94848336e-01  1.10605876e-15]]
     
 
 
@@ -777,10 +1044,10 @@ print(similarity_matrix)
 ```
 
     Cosine Similarity Matrix:
-    [[ 1.00000000e+00 -1.24403121e-16  1.03739550e-15  1.00000000e+00]
-     [-1.24403121e-16  1.00000000e+00  1.00000000e+00 -1.72782277e-16]
-     [ 1.03739550e-15  1.00000000e+00  1.00000000e+00  9.89016349e-16]
-     [ 1.00000000e+00 -1.72782277e-16  9.89016349e-16  1.00000000e+00]]
+    [[ 1.00000000e+00 -8.34092230e-16 -1.27543875e-15  1.00000000e+00]
+     [-8.34092230e-16  1.00000000e+00  1.00000000e+00  6.01162497e-16]
+     [-1.27543875e-15  1.00000000e+00  1.00000000e+00  1.59815980e-16]
+     [ 1.00000000e+00  6.01162497e-16  1.59815980e-16  1.00000000e+00]]
 
 
 
@@ -801,13 +1068,13 @@ for i, txt in enumerate(documents):
     plt.annotate(txt, (lsa_matrix[i, 0], lsa_matrix[i, 1]))
 
 plt.legend()
-plt.show()
+plt.show()      
 
 ```
 
 
     
-![png](README_files/README_29_0.png)
+![png](README_files/README_35_0.png)
     
 
 Notebooks have been converted and README has been updated.
