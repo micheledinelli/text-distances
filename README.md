@@ -2,6 +2,17 @@
 
 [![Run nbconvert](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml/badge.svg)](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml)
 
+    [nltk_data] Downloading package punkt to
+    [nltk_data]     /Users/micheledinelli/nltk_data...
+    [nltk_data]   Package punkt is already up-to-date!
+    [nltk_data] Downloading package stopwords to
+    [nltk_data]     /Users/micheledinelli/nltk_data...
+    [nltk_data]   Package stopwords is already up-to-date!
+    [nltk_data] Downloading package punkt to
+    [nltk_data]     /Users/micheledinelli/nltk_data...
+    [nltk_data]   Package punkt is already up-to-date!
+
+
 # Text distance: outline
 
 - [Length distance](#length-distance)
@@ -158,7 +169,7 @@
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_9_0.png)
+![png](text-distance-analysis_files/text-distance-analysis_10_0.png)
     
 
 
@@ -173,7 +184,7 @@
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_14_0.png)
+![png](text-distance-analysis_files/text-distance-analysis_15_0.png)
     
 
 
@@ -181,7 +192,7 @@
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_18_0.png)
+![png](text-distance-analysis_files/text-distance-analysis_19_0.png)
     
 
 
@@ -191,7 +202,7 @@
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_20_1.png)
+![png](text-distance-analysis_files/text-distance-analysis_21_1.png)
     
 
 # A comparison of text representation methods
