@@ -2,17 +2,6 @@
 
 [![Run nbconvert](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml/badge.svg)](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml)
 
-    [nltk_data] Downloading package punkt to
-    [nltk_data]     /Users/micheledinelli/nltk_data...
-    [nltk_data]   Package punkt is already up-to-date!
-    [nltk_data] Downloading package stopwords to
-    [nltk_data]     /Users/micheledinelli/nltk_data...
-    [nltk_data]   Package stopwords is already up-to-date!
-    [nltk_data] Downloading package punkt to
-    [nltk_data]     /Users/micheledinelli/nltk_data...
-    [nltk_data]   Package punkt is already up-to-date!
-
-
 # Text distance: outline
 
 - [Length distance](#length-distance)
