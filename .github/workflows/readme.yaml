@@ -31,7 +31,7 @@ jobs:
           pip install nbconvert
 
       - name: Run nbconvert
-        run: ./convert_and_merge.sh
+        run: ./readme-gen.sh
 
       - name: Push changes
         run: |
