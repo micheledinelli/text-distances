@@ -12,6 +12,7 @@
     [nltk_data]     /Users/micheledinelli/nltk_data...
     [nltk_data]   Package punkt is already up-to-date!
 
+
 # Text distance: outline
 
 - [Length distance](#length-distance)
@@ -27,6 +28,9 @@
   - Word mover's distance
   - Word mover's distance extension
 
+
+
+
 <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -40,7 +44,6 @@
     .dataframe thead th {
         text-align: right;
     }
-
 </style>
 <table border="1" class="dataframe">
   <thead>
@@ -152,6 +155,8 @@
 </table>
 </div>
 
+
+
 ### Length Distance <a id="length-distance"></a>
 
 #### Algorithms
@@ -161,7 +166,12 @@
     Manhattan distance between Duck and Cool: 2.00
     Hamming distance between Duck and Cool: 4.00
 
+
+
+    
 ![png](text-distance-analysis_files/text-distance-analysis_9_0.png)
+    
+
 
 ### Distribution distance
 
@@ -171,16 +181,29 @@
     JS divergence between documents: 0.077
     Wasserstein distance between documents: 0.035
 
+
+
+    
 ![png](text-distance-analysis_files/text-distance-analysis_14_0.png)
+    
+
 
 ### Semantic distance
 
+
+    
 ![png](text-distance-analysis_files/text-distance-analysis_18_0.png)
+    
+
 
     Length of Longest Common Subsequence: 3
     Longest Common Subsequence: ool
 
+
+
+    
 ![png](text-distance-analysis_files/text-distance-analysis_20_1.png)
+    
 
 # A comparison of text representation methods
 
@@ -193,11 +216,11 @@
     - Jaro similarity
   - Phrase based
     - Dice
-    - Jaccard
+    - Jaccard 
 - [Corpus based](#corpus-based)
   - Bag of word model
     - BOW
-    - TF-IDF
+    - TF-IDF 
   - Shallow window based
     - Word2Vec
     - GloVe
@@ -226,19 +249,33 @@
     Dice coefficient between The sky is blue and The sun is bright: 0.70
     Jaccard similarity between The sky is blue and The sun is bright: 0.53
 
+
 ## Corpus Based
 
+
+    
 ![png](text-representation-analysis_files/text-representation-analysis_10_0.png)
+    
+
 
 ## Shallow Window based
 
+
+    
 ![png](text-representation-analysis_files/text-representation-analysis_12_0.png)
+    
+
 
     Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.predictions.transform.LayerNorm.bias', 'cls.predictions.transform.dense.weight', 'cls.seq_relationship.bias', 'cls.predictions.transform.dense.bias', 'cls.predictions.bias', 'cls.seq_relationship.weight', 'cls.predictions.transform.LayerNorm.weight']
     - This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
     - This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
 
+
+
+    
 ![png](text-representation-analysis_files/text-representation-analysis_13_1.png)
+    
+
 
 ## Matrix factorization
 
@@ -248,8 +285,14 @@
     Topic 4: graphics, just, don, think, comp
     Topic 5: image, cview, file, files, data
 
+
 ## Semantic text matching
 
 ## Graph based
 
+
+    
 ![png](text-representation-analysis_files/text-representation-analysis_18_0.png)
+    
+
+[![Run nbconvert](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml/badge.svg?branch=main)](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml)
