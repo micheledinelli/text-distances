@@ -36,7 +36,7 @@ jobs:
       - name: Push changes
         run: |
           git add README.md
-          git add text_distance_analysis_files
-          git add text_representation_analysis_files
+          git add text-distance-analysis_files
+          git add text-representation-analysis_files
           git commit -m "Update README after notebook conversion"
           git push https://$GH_TOKEN@github.com/micheledinelli/text-distances.git HEAD:main
