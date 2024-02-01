@@ -31,17 +31,12 @@ jobs:
           pip install nbconvert
 
       - name: Run nbconvert
-        run: |
-          # Convert the notebook to markdown and update README
-          jupyter nbconvert --to markdown text-distance-analysis.ipynb --output README.md
-
-          # Append a message to the README
-          echo 'Notebooks have been converted and README has been updated.' >> README.md
-
-          echo '[![Run nbconvert](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml/badge.svg?branch=main)](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml)'
+        run: ./convert_and_merge.sh
 
       - name: Push changes
         run: |
           git add README.md
+          git add text_distance_analysis_files
+          git add text_representation_analysis_files
           git commit -m "Update README after notebook conversion"
           git push https://$GH_TOKEN@github.com/micheledinelli/text-distances.git HEAD:main
