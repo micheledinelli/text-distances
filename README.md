@@ -173,6 +173,66 @@
     
 
 
+Insight on euclidean vs cosine similarity
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>good</th>
+      <th>refrigerators</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Q</th>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>D1</th>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>D2</th>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>D3</th>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+    
+![png](text-distance-analysis_files/text-distance-analysis_13_0.png)
+    
+
+
 ### Distribution distance
 
 #### Algorithms
@@ -184,7 +244,7 @@
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_15_0.png)
+![png](text-distance-analysis_files/text-distance-analysis_18_0.png)
     
 
 
@@ -192,7 +252,7 @@
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_19_0.png)
+![png](text-distance-analysis_files/text-distance-analysis_22_0.png)
     
 
 
@@ -202,7 +262,7 @@
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_21_1.png)
+![png](text-distance-analysis_files/text-distance-analysis_24_1.png)
     
 
 # A comparison of text representation methods
