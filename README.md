@@ -577,7 +577,7 @@ Insight on euclidean vs cosine similarity
     
 
 
-    Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.seq_relationship.bias', 'cls.predictions.transform.dense.bias', 'cls.predictions.transform.LayerNorm.bias', 'cls.predictions.bias', 'cls.predictions.transform.dense.weight', 'cls.seq_relationship.weight', 'cls.predictions.transform.LayerNorm.weight']
+    Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.predictions.transform.dense.weight', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.transform.LayerNorm.bias', 'cls.predictions.bias', 'cls.seq_relationship.bias', 'cls.seq_relationship.weight', 'cls.predictions.transform.dense.bias']
     - This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
     - This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
 
@@ -605,5 +605,18 @@ Insight on euclidean vs cosine similarity
     
 ![png](text-representation-analysis_files/text-representation-analysis_21_0.png)
     
+
+
+    Top terms per component:
+    Topic 1: don, space, people, god, com
+    Topic 2: morality, sgi, livesey, caltech, keith
+    Topic 3: newton, apple, god, kent, sandvik
+    Topic 4: toronto, apple, henry, kent, sandvik
+    Topic 5: spencer, zoo, god, toronto, henry
+    Topic 6: spencer, zoo, graphics, toronto, henry
+    Topic 7: com, pat, alaska, digex, access
+    Topic 8: values, frank, alaska, morality, objective
+    Topic 9: digex, objective, livesey, access, sgi
+    Topic 10: jaeger, alaska, islam, livesey, sgi
 
 [![Run nbconvert](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml/badge.svg?branch=main)](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml)
