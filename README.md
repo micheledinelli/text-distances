@@ -322,20 +322,14 @@ Insight on euclidean vs cosine similarity
     
 
 
-
-    
-![png](text-representation-analysis_files/text-representation-analysis_16_0.png)
-    
-
-
-    Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.predictions.transform.dense.bias', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.transform.dense.weight', 'cls.predictions.bias', 'cls.seq_relationship.bias', 'cls.predictions.transform.LayerNorm.bias', 'cls.seq_relationship.weight']
+    Some weights of the model checkpoint at bert-base-uncased were not used when initializing BertModel: ['cls.seq_relationship.bias', 'cls.predictions.transform.dense.bias', 'cls.predictions.transform.LayerNorm.bias', 'cls.predictions.bias', 'cls.predictions.transform.dense.weight', 'cls.seq_relationship.weight', 'cls.predictions.transform.LayerNorm.weight']
     - This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
     - This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
 
 
 
     
-![png](text-representation-analysis_files/text-representation-analysis_17_1.png)
+![png](text-representation-analysis_files/text-representation-analysis_16_1.png)
     
 
 
@@ -344,8 +338,8 @@ Insight on euclidean vs cosine similarity
     Topic 1: space, like, don, know, year
     Topic 2: thanks, graphics, files, image, space
     Topic 3: space, nasa, launch, shuttle, orbit
-    Topic 4: graphics, just, don, think, like
-    Topic 5: file, image, cview, files, tiff
+    Topic 4: graphics, just, don, think, aspects
+    Topic 5: thanks, mail, list, advance, space
 
 
 ## Semantic text matching
@@ -354,7 +348,7 @@ Insight on euclidean vs cosine similarity
 
 
     
-![png](text-representation-analysis_files/text-representation-analysis_22_0.png)
+![png](text-representation-analysis_files/text-representation-analysis_21_0.png)
     
 
 [![Run nbconvert](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml/badge.svg?branch=main)](https://github.com/micheledinelli/text-distances/actions/workflows/readme.yaml)
