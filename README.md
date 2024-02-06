@@ -102,8 +102,8 @@ Insight on euclidean vs cosine similarity
 
 #### Algorithms
 
-    KL divergence between documents: 0.303
-    JS divergence between documents: 0.077
+    KL divergence between documents: 0.116
+    JS divergence between documents: 0.030
     Wasserstein distance between documents: 0.035
 
 
@@ -113,17 +113,272 @@ Insight on euclidean vs cosine similarity
     
 
 
+
+    
+![png](text-distance-analysis_files/text-distance-analysis_19_0.png)
+    
+
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Words</th>
+      <th>Sentence</th>
+      <th>Frequency</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>loves</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>it</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>the</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>cat</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>mat</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>yarn</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>learning</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>key</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>a</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>advanced</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>really</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>ball</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>machine</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>played</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>algorithms</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>successful</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>sat</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>happy</td>
+      <td>The cat sat mat . The cat played ball yarn . I...</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>loves</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>it</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>the</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>cat</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>mat</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>yarn</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>learning</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>key</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>a</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>advanced</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>really</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>ball</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>machine</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>played</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>algorithms</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>successful</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>sat</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>happy</td>
+      <td>Advanced algorithms key successful machine lea...</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
 ### Semantic distance
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_22_0.png)
+![png](text-distance-analysis_files/text-distance-analysis_24_0.png)
     
 
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_23_0.png)
+![png](text-distance-analysis_files/text-distance-analysis_25_0.png)
     
 
 
@@ -133,7 +388,7 @@ Insight on euclidean vs cosine similarity
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_25_1.png)
+![png](text-distance-analysis_files/text-distance-analysis_27_1.png)
     
 
 # A comparison of text representation methods
