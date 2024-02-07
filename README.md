@@ -43,23 +43,17 @@
     
 
 
-
-    
-![png](text-distance-analysis_files/text-distance-analysis_18_0.png)
-    
-
-
 ### Semantic distance
 
 
     
+![png](text-distance-analysis_files/text-distance-analysis_21_0.png)
+    
+
+
+
+    
 ![png](text-distance-analysis_files/text-distance-analysis_22_0.png)
-    
-
-
-
-    
-![png](text-distance-analysis_files/text-distance-analysis_23_0.png)
     
 
 
@@ -69,7 +63,7 @@
 
 
     
-![png](text-distance-analysis_files/text-distance-analysis_25_1.png)
+![png](text-distance-analysis_files/text-distance-analysis_24_1.png)
     
 
 # A comparison of text representation methods
